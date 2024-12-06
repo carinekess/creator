@@ -1,0 +1,22 @@
+{
+  "canisters": {
+    "creatori-chaini-backend": {
+      "main": "src/creatori-chaini-backend/main.mo",
+      "type": "motoko"
+    },
+    "creatori-chaini-frontend": {
+      "dependencies": ["creatori-chaini-backend"],
+      "source": ["src/creatori-chaini-frontend/dist"],
+      "type": "assets",
+      "workspace": "creatori-chaini-frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
