@@ -1,14 +1,18 @@
 {
   "canisters": {
-    "creatori-chaini-backend": {
-      "main": "src/creatori-chaini-backend/main.mo",
+    "creator_backend": {
+      "main": "src/creator_backend/main.mo",
       "type": "motoko"
     },
-    "creatori-chaini-frontend": {
-      "dependencies": ["creatori-chaini-backend"],
-      "source": ["src/creatori-chaini-frontend/dist"],
+    "creator_frontend": {
+      "dependencies": [
+        "creator_backend"
+      ],
+      "source": [
+        "src/creator_frontend/dist"
+      ],
       "type": "assets",
-      "workspace": "creatori-chaini-frontend"
+      "workspace": "creator_frontend"
     }
   },
   "defaults": {
