@@ -35,7 +35,7 @@ const AddArtist = () => {
 
   // Function to navigate to the View Artists page
   const handleViewArtists = () => {
-    navigate('/admin/ViewArtists'); // Adjust the route as needed
+    navigate('/admin/ViewArtist'); // Adjust the route as needed
   };
 
   return (
