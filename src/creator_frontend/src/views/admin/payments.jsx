@@ -4,21 +4,24 @@ import { Card, Table, Spinner, Alert } from 'react-bootstrap';
 import { creator_backend } from 'declarations/creator_backend';
 
 const ArtworkPayments = () => {
-  const { artwork_id } = useParams(); // Get artwork_id from URL parameters
+  const { artwork_id } = useParams();
   const [payments, setPayments] = useState([]);
   const [artwork, setArtwork] = useState(null);
   const [payersMap, setPayersMap] = useState({});
   const [totalRaised, setTotalRaised] = useState(0);
-  const [artist, setArtist] = useState(null); // State for artist details
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
+  const [artist, setArtist] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchPaymentsAndArtwork = async () => {
-      setLoading(true); // Start loading
-      setError(null); // Reset error state
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
       try {
-        const paymentsList = await creator_backend.getPaymentsByArtwork(Number(artwork_id));
+        const artworkID = BigInt(artwork_id);
+
+        // Fetch payments
+        const paymentsList = await creator_backend.getPaymentsByArtwork(artworkID);
         setPayments(paymentsList);
 
         const total = paymentsList
@@ -26,30 +29,32 @@ const ArtworkPayments = () => {
           .reduce((acc, payment) => acc + Number(payment.amount), 0);
         setTotalRaised(total);
 
-        const artworkDetails = await creator_backend.getArtworkDetails(Number(artwork_id));
-        setArtwork(artworkDetails[0]);
+        // Fetch artwork details
+        const artworkDetails = await creator_backend.getArtworkDetails(artworkID);
+        if (artworkDetails.length) {
+          setArtwork(artworkDetails[0]);
 
-        // Fetch artist info if artwork details are available
-        if (artworkDetails[0]) {
+          // Fetch artist details
           const artistDetails = await creator_backend.getArtistById(artworkDetails[0].artist_id);
-          setArtist(artistDetails[0]);
+          if (artistDetails.length) setArtist(artistDetails[0]);
         }
 
-        const allPayers = await creator_backend.getPayers();
+        // Fetch payers and create a mapping
+        const allPayers = await creator_backend.getClients();
         const payers = {};
         allPayers.forEach(payer => {
           payers[payer.id] = payer.name;
         });
         setPayersMap(payers);
       } catch (error) {
-        console.error('Failed to fetch payments or artwork details:', error);
-        setError('Failed to load data. Please try again later.'); // Set error message
+        console.error('Error fetching data:', error);
+        setError('Unable to fetch data. Please try again later.');
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
-    fetchPaymentsAndArtwork();
+    fetchData();
   }, [artwork_id]);
 
   return (
@@ -92,8 +97,8 @@ const ArtworkPayments = () => {
                     <th>Date</th>
                     <th>Payment Status</th>
                     <th>Phone Number</th>
-                    <th>Transaction ID</th> {/* New column for Transaction ID */}
-                    <th>Transaction Reference</th> {/* New column for Transaction Reference */}
+                    <th>Transaction ID</th>
+                    <th>Transaction Reference</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -101,14 +106,14 @@ const ArtworkPayments = () => {
                     payments.map((payment, index) => (
                       <tr key={payment.payment_id}>
                         <th scope="row">{index + 1}</th>
-                        <td>{payersMap[payment.client_id] || 'Unknown'}</td> {/* Assuming client_id maps to payers */}
+                        <td>{payersMap[payment.client_id] || 'Unknown'}</td>
                         <td>{Number(payment.client_id).toLocaleString()}</td>
                         <td>{Number(payment.amount).toLocaleString()}</td>
                         <td>{payment.date}</td>
                         <td>{payment.payment_status}</td>
                         <td>{payment.phone_number}</td>
-                        <td>{payment.tx_id}</td> {/* Display transaction ID */}
-                        <td>{payment.tx_ref}</td> {/* Display transaction reference */}
+                        <td>{payment.tx_id}</td>
+                        <td>{payment.tx_ref}</td>
                       </tr>
                     ))
                   ) : (

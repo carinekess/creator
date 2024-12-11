@@ -32,8 +32,9 @@ const DashDefault = () => {
 
         // Fetch admin info from backend
         const adm = await creator_backend.getAdminById(Number(admin.id));
+        console.log('Admin info:', adm);
         const adminInfo = adm[0];
-
+*
         // Fetch clients, artists, artworks, and payments
         const clients = await creator_backend.getClients();
         const artists = await creator_backend.getArtists();
