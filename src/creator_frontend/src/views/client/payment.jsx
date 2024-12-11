@@ -76,6 +76,7 @@ const Payment = () => {
           Number(artwork.artwork_id), // Changed goal_id to artwork_id
           Number(artwork.price), // Changed values.amount to artwork.price
           date,
+          values.phone_number,
           'none',
           tx_ref,
           'pending'

@@ -31,7 +31,8 @@ const DashDefault = () => {
         }
 
         // Fetch admin info from backend
-        const adminInfo = await creator_backend.getAdminById(Number(admin.id));
+        const adm = await creator_backend.getAdminById(Number(admin.id));
+        const adminInfo = adm[0];
 
         // Fetch clients, artists, artworks, and payments
         const clients = await creator_backend.getClients();
@@ -64,7 +65,7 @@ const DashDefault = () => {
           recentClients,
           recentArtists,
           recentPayments,
-          adminInfo: adminInfo ? adminInfo[0] : null,
+          adminInfo: adminInfo || null,
         });
       } catch (error) {
         console.error("Failed to fetch dashboard data:", error);
@@ -231,7 +232,7 @@ const DashDefault = () => {
                     dashboardData.recentPayments.map((payment, index) => (
                       <tr key={payment.payment_id}>
                         <td>{index + 1}</td>
-                        <td>{payment.artwork_id}</td>
+                        <td>{Number(payment.artwork_id)}</td>
                         <td>{parseFloat(payment.amount)} Frw</td>
                         <td>{new Date(payment.date).toLocaleDateString()}</td>
                         <td>{payment.payment_status}</td>
